@@ -1,0 +1,59 @@
+syntax = "proto3";
+package auth;
+option go_package = "github.com/charCharacter/history;auth";
+
+import "google/api/annotations.proto";
+import "google/api/validate.proto";
+
+// Register
+
+message AuthRegisterRequest {
+  string username = 1 [(validate.rules).string.min_len = 1];
+  string password = 2 [(validate.rules).string.min_len = 6];
+}
+
+message AuthRegisterResponse {
+  string uid = 1;
+}
+
+// Login
+
+message AuthLoginRequest {
+  string username = 1 [(validate.rules).string.min_len = 1];
+  string password = 2 [(validate.rules).string.min_len = 6];
+}
+
+
+message AuthLoginResponse {
+  string token = 1;
+  string username = 2 [(validate.rules).string.min_len = 1];
+}
+
+// Validate
+
+message AuthValidateRequest { string token = 1 [(validate.rules).string.min_len = 1]; }
+
+message AuthValidateResponse {
+  string uid = 1;
+}
+
+service AuthService {
+  rpc AuthRegister(AuthRegisterRequest) returns(AuthRegisterResponse){
+    option (google.api.http) = {
+      post: "/auth/register"
+      body: "*"
+    };
+  }
+  rpc AuthLogin(AuthLoginRequest) returns(AuthLoginResponse){
+    option (google.api.http) = {
+      post: "/auth/login"
+      body: "*"
+    };
+  }
+  rpc AuthValidate(AuthValidateRequest) returns(AuthValidateResponse){
+    option (google.api.http) = {
+      post: "/auth/validate"
+      body: "*"
+    };
+  }
+}
